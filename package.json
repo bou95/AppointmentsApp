@@ -10,8 +10,12 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@freakycoder/react-native-bounceable": "^0.2.5",
     "react": "17.0.2",
-    "react-native": "0.65.1"
+    "react-native": "0.65.1",
+    "react-native-animated-spinkit": "^1.5.2",
+    "react-native-dynamic-search-bar": "^2.0.1",
+    "react-native-elements": "^3.4.2"
   },
   "devDependencies": {
     "@babel/core": "7.15.0",

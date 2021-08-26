@@ -12,6 +12,8 @@ target 'AppointmentsApp' do
     :hermes_enabled => false
   )
 
+  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
+
   target 'AppointmentsAppTests' do
     inherit! :complete
     # Pods for testing

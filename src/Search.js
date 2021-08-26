@@ -1,4 +1,3 @@
-
 import React, {useState, useEffect} from 'react';
 import {
     SafeAreaView,
@@ -6,31 +5,91 @@ import {
     StyleSheet,
     View,
     FlatList,
-    TextInput, Image,
+    TextInput, Image, TouchableOpacity,
 } from 'react-native';
 import {Card} from 'react-native-elements';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { Icon } from 'react-native-elements'
+
+
+import {faCalendarAlt, faClock, faCoffee, faMapMarkerAlt} from '@fortawesome/free-solid-svg-icons';
 
 const Search = () => {
+    /*********************************************DATE PICKER**************************************************************/
+
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
+    const [date, setDate] = useState(new Date());
+    const [fullDate, setFullDate] = useState('--/--/----');
+    const [fullTime, setFullTime] = useState('--:--');
+
+    const showDatePicker = () => {
+        setDatePickerVisibility(true);
+    };
+    const showTimePicker = () => {
+        setTimePickerVisibility(true);
+    };
+
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
+    };
+
+    const hideTimePicker = () => {
+        setTimePickerVisibility(false);
+    };
+
+    const handleConfirm = selectedDate => {
+        setDate(selectedDate);
+
+        const day = selectedDate.getDate();
+        const month = selectedDate.getMonth();
+        const year = selectedDate.getFullYear();
+
+        const formattedDateEnglish = day + '/' + month + '/' + year;
+        setFullDate(formattedDateEnglish);
+
+        hideDatePicker();
+    };
+
+    const handleConfirm2 = selectedTime => {
+        setDate(selectedTime);
+
+        const hours = selectedTime.getHours();
+        const minutes = selectedTime.getMinutes();
+
+        const time = hours + ':' + minutes;
+        setFullTime(time);
+
+        hideTimePicker();
+    };
+
+    /**********************************************************************************************************************/
+
     const coaches = [
         {
+            visible: true,
             name: 'Jake Hill',
             job: 'Career Coach',
             reviews: '36',
             avatar: require('../assets/user1.png')
         },
         {
+            visible: false,
             name: 'Emily Brown',
             job: 'Health/Wellness coach',
             reviews: '21',
             avatar: require('../assets/user2.png')
         },
         {
+            visible: false,
             name: 'Kim Yard',
             job: 'Family/Parenting coach',
             reviews: '16',
             avatar: require('../assets/user3.png')
         },
         {
+            visible: false,
             name: 'Ahmed Mosa',
             job: 'Relationship coach',
             reviews: '42',
@@ -42,6 +101,7 @@ const Search = () => {
     const [search, setSearch] = useState('');
     const [filteredDataSource, setFilteredDataSource] = useState([]);
     const [masterDataSource, setMasterDataSource] = useState([]);
+
 
     useEffect(() => {
         setFilteredDataSource(coaches);
@@ -74,22 +134,104 @@ const Search = () => {
 
     const ItemView = ({item}) => {
         return (
-            <Card containerStyle={styles.coaches}>
-                <View style={styles.row}>
-                    <View style={styles.col}>
-                        <Image
-                            style={styles.avatar}
-                            resizeMode="cover"
-                            source={item.avatar}
-                        />
+            // <TouchableOpacity>
+                <Card containerStyle={styles.coaches}>
+                    <View style={styles.row}>
+                        <View style={styles.col}>
+                            <Image
+                                style={styles.avatar}
+                                resizeMode="cover"
+                                source={item.avatar}
+                            />
+                        </View>
+                        <View style={[styles.col, {paddingLeft: 20}]}>
+                            <Text style={styles.name}>{item.name}</Text>
+                            <Text style={styles.job}>{item.job}</Text>
+                            <Text style={styles.reviews}>{item.reviews} reviews</Text>
+                        </View>
                     </View>
-                    <View style={[styles.col, {paddingLeft: 20}]}>
-                        <Text style={styles.name}>{item.name}</Text>
-                        <Text style={styles.job}>{item.job}</Text>
-                        <Text style={styles.reviews}>{item.reviews} reviews</Text>
+                    {item.visible &&
+                    <View>
+                        <Text style={styles.label}>Select Appointment Date</Text>
+                        <View style={styles.timeContainer}>
+                            <View style={styles.timeItem}>
+                                <Text
+                                    style={{ textAlign: 'left', left: 20, color: (fullDate.toString() === '--/--/----' || fullDate.toString() === '----/--/--') ? '#97AABD' : '#000759' }}>
+                                    {fullDate.toString()}
+                                </Text>
+                            </View>
+                            <View>
+                                <TouchableOpacity onPress={showDatePicker}>
+                                    <View>
+                                        <FontAwesomeIcon
+                                            icon={ faCalendarAlt }
+                                            color={'#294E95'}
+                                            size={22} />
+                                    </View>
+                                </TouchableOpacity>
+
+                                <DateTimePickerModal
+                                    isVisible={isDatePickerVisible}
+                                    mode="date"
+                                    onConfirm={handleConfirm}
+                                    onCancel={hideDatePicker}
+                                    textColor="#00000090"
+                                />
+                            </View>
+                        </View>
+
+                        <Text style={styles.label}>Select Appointment Time</Text>
+                        <View style={styles.timeContainer}>
+                            <View style={styles.timeItem}>
+                                <Text
+                                    style={{ textAlign: 'left', left: 20, color: (fullTime.toString() === '--:--') ? '#97AABD' : '#000759' }}>
+                                    {fullTime.toString()}
+                                </Text>
+                            </View>
+                            <View>
+                                <TouchableOpacity onPress={showTimePicker}>
+                                    <View>
+                                        <FontAwesomeIcon
+                                            icon={ faClock }
+                                            color={'#294E95'}
+                                            size={22} />
+                                    </View>
+                                </TouchableOpacity>
+
+                                <DateTimePickerModal
+                                    isVisible={isTimePickerVisible}
+                                    mode="time"
+                                    onConfirm={handleConfirm2}
+                                    onCancel={hideTimePicker}
+                                    textColor="#00000090"
+                                />
+                            </View>
+                        </View>
+
+                        <View style={styles.location}>
+                            <View style={styles.timeItem}>
+                                <View style={{flexDirection: 'row'}}>
+                                    <FontAwesomeIcon
+                                        icon={ faMapMarkerAlt }
+                                        color={'#294E95'}
+                                        size={22} />
+                                        <Text style={styles.locationText}> Street 12, building 7, office 5</Text>
+                                </View>
+                            </View>
+                        </View>
+
+                        <View style={styles.confirm}>
+                            <View style={styles.timeItem}>
+                                <View>
+                                    <Text style={styles.confirmText}>Confirm Appointment</Text>
+                                </View>
+                            </View>
+                        </View>
                     </View>
-                </View>
-            </Card>
+                    }
+                </Card>
+            // </TouchableOpacity>
+
         );
     };
 
@@ -184,7 +326,70 @@ const styles = StyleSheet.create({
         color: '#6F6F6F',
         fontSize: 12,
         fontWeight: '300',
-    }
+    },
+    timeContainer: {
+        alignSelf: 'center',
+        width: '70%',
+        flex: 1,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'flex-start', // fill rows left to right
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        borderColor: '#294E95',
+        borderWidth: 1,
+        marginBottom: 10,
+    },
+    location: {
+        alignSelf: 'center',
+        width: '70%',
+        flex: 1,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'flex-start',
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        backgroundColor: 'white',
+    },
+    timeItem: {
+        width: '90%',
+    },
+    label: {
+        color: '#294E95',
+        fontSize: 15,
+        fontWeight: '400',
+        paddingLeft: 60,
+        paddingTop: 20,
+    },
+    locationText: {
+        color: '#294E95',
+        fontSize: 15,
+        fontWeight: '400',
+    },
+    confirmText: {
+        color: 'white',
+        fontSize: 14,
+        fontWeight: '600',
+        textAlign: 'center',
+    },
+    confirm: {
+        alignSelf: 'center',
+        justifyContent: 'center',
+        width: '70%',
+        flex: 1,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        backgroundColor: '#294E95',
+        borderRadius: 10,
+        borderColor: '#294E95',
+        borderWidth: 1,
+        marginTop: 10,
+        marginBottom: 30,
+},
 });
 
 export default Search;

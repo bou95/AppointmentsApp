@@ -10,12 +10,20 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-brands-svg-icons": "^5.15.4",
+    "@fortawesome/free-regular-svg-icons": "^5.15.4",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/react-native-fontawesome": "^0.2.7",
     "@freakycoder/react-native-bounceable": "^0.2.5",
+    "@react-native-community/datetimepicker": "^3.5.2",
     "react": "17.0.2",
     "react-native": "0.65.1",
     "react-native-animated-spinkit": "^1.5.2",
     "react-native-dynamic-search-bar": "^2.0.1",
-    "react-native-elements": "^3.4.2"
+    "react-native-elements": "^3.4.2",
+    "react-native-modal-datetime-picker": "^10.2.0",
+    "react-native-svg": "^12.1.1"
   },
   "devDependencies": {
     "@babel/core": "7.15.0",

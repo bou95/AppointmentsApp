@@ -68,44 +68,57 @@ const Search = () => {
 
     const coaches = [
         {
-            visible: true,
+            id: 0,
+            visible: false,
+            booked: false,
             name: 'Jake Hill',
             job: 'Career Coach',
             reviews: '36',
             avatar: require('../assets/user1.png')
         },
         {
+            id: 1,
             visible: false,
+            booked: false,
             name: 'Emily Brown',
             job: 'Health/Wellness coach',
             reviews: '21',
             avatar: require('../assets/user2.png')
         },
         {
+            id: 2,
             visible: false,
+            booked: false,
             name: 'Kim Yard',
             job: 'Family/Parenting coach',
             reviews: '16',
             avatar: require('../assets/user3.png')
         },
         {
+            id: 3,
             visible: false,
+            booked: false,
             name: 'Ahmed Mosa',
             job: 'Relationship coach',
             reviews: '42',
             avatar: require('../assets/user4.png')
         },
     ]
+    const [coachesArray, setCoachesArray] = useState(coaches);
+
     const names = coaches.map((c) => c.name);
+
+    const [refresh, setRefresh] = useState(false);
+
+
 
     const [search, setSearch] = useState('');
     const [filteredDataSource, setFilteredDataSource] = useState([]);
     const [masterDataSource, setMasterDataSource] = useState([]);
 
-
     useEffect(() => {
-        setFilteredDataSource(coaches);
-        setMasterDataSource(coaches);
+        setFilteredDataSource(coachesArray);
+        setMasterDataSource(coachesArray);
     }, []);
 
     const searchFilterFunction = (text) => {
@@ -134,7 +147,17 @@ const Search = () => {
 
     const ItemView = ({item}) => {
         return (
-            // <TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+                let newArray = [...coachesArray];
+                newArray[item.id].visible = !coachesArray[item.id].visible;
+                newArray[item.id] = {...newArray[item.id], key: !coachesArray[item.id]};
+                setCoachesArray(newArray);
+
+
+                setRefresh(!refresh)
+                console.log(refresh)
+
+            }}>
                 <Card containerStyle={styles.coaches}>
                     <View style={styles.row}>
                         <View style={styles.col}>
@@ -147,10 +170,23 @@ const Search = () => {
                         <View style={[styles.col, {paddingLeft: 20}]}>
                             <Text style={styles.name}>{item.name}</Text>
                             <Text style={styles.job}>{item.job}</Text>
-                            <Text style={styles.reviews}>{item.reviews} reviews</Text>
+                            { item.booked ?
+                                <View style={{flexDirection: 'row'}}>
+                                    <FontAwesomeIcon
+                                        icon={ faCalendarAlt }
+                                        color={'#53A653'}
+                                        size={17} />
+                                    <Text
+                                        style={styles.booked}>
+                                        {' '}{fullDate.toString()} {fullTime.toString()}
+                                    </Text>
+                                </View>
+                                :
+                                <Text style={styles.reviews}>{item.reviews} reviews</Text>
+                            }
                         </View>
                     </View>
-                    {item.visible &&
+                    {item.visible ?
                     <View>
                         <Text style={styles.label}>Select Appointment Date</Text>
                         <View style={styles.timeContainer}>
@@ -220,17 +256,34 @@ const Search = () => {
                             </View>
                         </View>
 
-                        <View style={styles.confirm}>
+                        <TouchableOpacity style={styles.confirm} onPress={() =>
+                        {
+                           console.log("CONFIRM!!!" +
+                               "");
+
+
+                            let newArray = [...coachesArray];
+                            newArray[item.id].visible = !coachesArray[item.id].visible;
+                            newArray[item.id].booked = true;
+                            newArray[item.id] = {...newArray[item.id], key: !coachesArray[item.id]};
+                            setCoachesArray(newArray);
+                            console.log("come on!")
+
+                            console.log(coachesArray);
+
+                        }}>
                             <View style={styles.timeItem}>
                                 <View>
                                     <Text style={styles.confirmText}>Confirm Appointment</Text>
                                 </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     </View>
+                        :
+                        <View></View>
                     }
                 </Card>
-            // </TouchableOpacity>
+            </TouchableOpacity>
 
         );
     };
@@ -246,11 +299,6 @@ const Search = () => {
                 }}
             />
         );
-    };
-
-    const getItem = (item) => {
-        // Function for click on an item
-        alert('Id : ' + item.id + ' Title : ' + item.title);
     };
 
     return (
@@ -269,6 +317,7 @@ const Search = () => {
                     keyExtractor={(item, index) => index.toString()}
                     ItemSeparatorComponent={ItemSeparatorView}
                     renderItem={ItemView}
+                    extraData={refresh}
                 />
             </View>
         </SafeAreaView>
@@ -326,6 +375,11 @@ const styles = StyleSheet.create({
         color: '#6F6F6F',
         fontSize: 12,
         fontWeight: '300',
+    },
+    booked: {
+        color: '#53A653',
+        fontSize: 12,
+        fontWeight: '700',
     },
     timeContainer: {
         alignSelf: 'center',
